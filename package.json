@@ -69,5 +69,8 @@
     "fork:dev": "node ./_scripts.js fork:dev",
     "fork:node": "node ./_scripts.js fork:node",
     "fork:test": "node ./_scripts.js fork:test"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^4.2.0"
   }
 }
