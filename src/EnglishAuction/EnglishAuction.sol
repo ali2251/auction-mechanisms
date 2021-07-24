@@ -1,15 +1,9 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 pragma solidity 0.8.3;
 
-// pragma abicoder v2; // solhint-disable-line
-
-// import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
-// import "./Constants.sol";
-// import "./NFTMarketCore.sol";
-// import "./NFTMarketFees.sol";
 import "./SendValueWithFallbackWithdraw.sol";
 import "./NFTMarketAuction.sol";
 
@@ -18,14 +12,7 @@ import "./NFTMarketAuction.sol";
 /**
  * @notice Manages a reserve price auction for NFTs.
  */
-// is
-//   Constants,
-//   FoundationAdminRole,
-//   NFTMarketCore,
-//   ReentrancyGuardUpgradeable,
-//   SendValueWithFallbackWithdraw,
-//   NFTMarketFees,
-//   NFTMarketAuction
+
 abstract contract NFTMarketReserveAuction is
     ReentrancyGuardUpgradeable,
     NFTMarketAuction,
@@ -50,14 +37,7 @@ abstract contract NFTMarketReserveAuction is
     uint256 private _minPercentIncrementInBasisPoints;
     uint256 internal constant BASIS_POINTS = 10000;
 
-    // This variable was used in an older version of the contract, left here as a gap to ensure upgrade compatibility
-    uint256 private ______gap_was_maxBidIncrementRequirement;
-
     uint256 private _duration;
-
-    // These variables were used in an older version of the contract, left here as gaps to ensure upgrade compatibility
-    uint256 private ______gap_was_extensionDuration;
-    uint256 private ______gap_was_goLiveDate;
 
     // Cap the max duration so that overflows will not occur
     uint256 private constant MAX_MAX_DURATION = 1000 days;
@@ -336,6 +316,4 @@ abstract contract NFTMarketReserveAuction is
 
         emit ReserveAuctionCanceledByAdmin(auctionId, reason);
     }
-
-    uint256[1000] private ______gap;
 }
