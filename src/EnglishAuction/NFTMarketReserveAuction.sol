@@ -13,11 +13,7 @@ import "./NFTMarketAuction.sol";
  * @notice Manages a reserve price auction for NFTs.
  */
 
-abstract contract NFTMarketReserveAuction is
-    ReentrancyGuardUpgradeable,
-    NFTMarketAuction,
-    SendValueWithFallbackWithdraw
-{
+contract NFTMarketReserveAuction is ReentrancyGuardUpgradeable, NFTMarketAuction, SendValueWithFallbackWithdraw {
     //   using SafeMathUpgradeable for uint256;
 
     struct ReserveAuction {
@@ -261,8 +257,11 @@ abstract contract NFTMarketReserveAuction is
         delete nftContractToTokenIdToAuctionId[auction.nftContract][auction.tokenId];
         delete auctionIdToAuction[auctionId];
 
+        // buyer gets the nft
         IERC721Upgradeable(auction.nftContract).transferFrom(address(this), auction.bidder, auction.tokenId);
 
+        _sendValueWithFallbackWithdrawWithMediumGasLimit(auction.seller, auction.amount);
+        // TODO: distribute funds
         // (uint256 f8nFee, uint256 creatorFee, uint256 ownerRev) = _distributeFunds(
         //     auction.nftContract,
         //     auction.tokenId,
@@ -296,7 +295,7 @@ abstract contract NFTMarketReserveAuction is
         return minIncrement + currentBidAmount;
     }
 
-    // TODO: protect function
+    // TODO: protect function with ownable
     /**
      * @notice Allows Foundation to cancel an auction, refunding the bidder and returning the NFT to the seller.
      * This should only be used for extreme cases such as DMCA takedown requests. The reason should always be provided.
