@@ -75,6 +75,10 @@ contract NFTMarketReserveAuction is ReentrancyGuardUpgradeable, NFTMarketAuction
         _;
     }
 
+    constructor() {
+        _initializeNFTMarketReserveAuction();
+    }
+
     /**
      * @notice Returns auction details for a given auctionId.
      */
@@ -118,6 +122,7 @@ contract NFTMarketReserveAuction is ReentrancyGuardUpgradeable, NFTMarketAuction
         _duration = 24 hours; // A sensible default value
     }
 
+    // TODO: allow users to update maybe
     function _updateReserveAuctionConfig(uint256 minPercentIncrementInBasisPoints, uint256 duration) internal {
         require(
             minPercentIncrementInBasisPoints <= BASIS_POINTS,
@@ -260,6 +265,7 @@ contract NFTMarketReserveAuction is ReentrancyGuardUpgradeable, NFTMarketAuction
         // buyer gets the nft
         IERC721Upgradeable(auction.nftContract).transferFrom(address(this), auction.bidder, auction.tokenId);
 
+        // for now we send the value to seller, this can be changed to add royalties, creator fees etc.
         _sendValueWithFallbackWithdrawWithMediumGasLimit(auction.seller, auction.amount);
         // TODO: distribute funds
         // (uint256 f8nFee, uint256 creatorFee, uint256 ownerRev) = _distributeFunds(
@@ -300,19 +306,19 @@ contract NFTMarketReserveAuction is ReentrancyGuardUpgradeable, NFTMarketAuction
      * @notice Allows Foundation to cancel an auction, refunding the bidder and returning the NFT to the seller.
      * This should only be used for extreme cases such as DMCA takedown requests. The reason should always be provided.
      */
-    function adminCancelReserveAuction(uint256 auctionId, string memory reason) public {
-        require(bytes(reason).length > 0, "NFTMarketReserveAuction: Include a reason for this cancellation");
-        ReserveAuction memory auction = auctionIdToAuction[auctionId];
-        require(auction.amount > 0, "NFTMarketReserveAuction: Auction not found");
+    // function adminCancelReserveAuction(uint256 auctionId, string memory reason) public {
+    //     require(bytes(reason).length > 0, "NFTMarketReserveAuction: Include a reason for this cancellation");
+    //     ReserveAuction memory auction = auctionIdToAuction[auctionId];
+    //     require(auction.amount > 0, "NFTMarketReserveAuction: Auction not found");
 
-        delete nftContractToTokenIdToAuctionId[auction.nftContract][auction.tokenId];
-        delete auctionIdToAuction[auctionId];
+    //     delete nftContractToTokenIdToAuctionId[auction.nftContract][auction.tokenId];
+    //     delete auctionIdToAuction[auctionId];
 
-        IERC721Upgradeable(auction.nftContract).transferFrom(address(this), auction.seller, auction.tokenId);
-        if (auction.bidder != address(0)) {
-            _sendValueWithFallbackWithdrawWithMediumGasLimit(auction.bidder, auction.amount);
-        }
+    //     IERC721Upgradeable(auction.nftContract).transferFrom(address(this), auction.seller, auction.tokenId);
+    //     if (auction.bidder != address(0)) {
+    //         _sendValueWithFallbackWithdrawWithMediumGasLimit(auction.bidder, auction.amount);
+    //     }
 
-        emit ReserveAuctionCanceledByAdmin(auctionId, reason);
-    }
+    //     emit ReserveAuctionCanceledByAdmin(auctionId, reason);
+    // }
 }
