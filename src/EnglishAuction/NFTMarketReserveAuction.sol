@@ -275,7 +275,7 @@ contract NFTMarketReserveAuction is ReentrancyGuardUpgradeable, NFTMarketAuction
         //     auction.amount
         // );
 
-        // emit ReserveAuctionFinalized(auctionId, auction.seller, auction.bidder, f8nFee, creatorFee, ownerRev);
+        emit ReserveAuctionFinalized(auctionId, auction.seller, auction.bidder, 0, 0, auction.amount);
     }
 
     /**
